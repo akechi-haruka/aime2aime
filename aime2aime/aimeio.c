@@ -44,7 +44,7 @@ HRESULT aime_debug_print_versions() {
     return hr;
 }
 
-DWORD WINAPI aime_api_process_thread_func(LPVOID lpParam) {
+DWORD WINAPI aime_api_process_thread_func(__attribute__((unused)) LPVOID lpParam) {
     while (!terminate_by_unload) {
 
         if (!is_busy_by_game) {
@@ -128,7 +128,7 @@ HRESULT aime_io_init(void) {
 
     Minimum API version: 0x0100
  */
-HRESULT aime_io_nfc_poll(uint8_t unit_no) {
+HRESULT aime_io_nfc_poll(__attribute__((unused)) uint8_t unit_no) {
     last_poll = GetTickCount();
     return aime_poll();
 }
@@ -149,7 +149,7 @@ HRESULT aime_io_nfc_poll(uint8_t unit_no) {
     Minimum API version: 0x0100
 */
 HRESULT aime_io_nfc_get_aime_id(
-        uint8_t unit_no,
+        __attribute__((unused)) uint8_t unit_no,
         uint8_t *luid,
         size_t luid_size) {
     if (aime_get_card_type() != CARD_TYPE_MIFARE) {
@@ -158,7 +158,7 @@ HRESULT aime_io_nfc_get_aime_id(
 
     memcpy(luid, aime_get_card_id(), min(luid_size, aime_get_card_len()));
 
-    api_send(PACKET_26_CARD_AIME, aime_get_card_len(), aime_get_card_id());
+    api_send(PACKET_26_CARD_AIME, aime_get_card_len(), (uint8_t*)aime_get_card_id());
 
     return S_OK;
 }
@@ -184,14 +184,14 @@ HRESULT aime_io_nfc_get_aime_id(
 
     Minimum API version: 0x0100
 */
-HRESULT aime_io_nfc_get_felica_id(uint8_t unit_no, uint64_t *IDm) {
+HRESULT aime_io_nfc_get_felica_id(__attribute__((unused)) uint8_t unit_no, uint64_t *IDm) {
     if (aime_get_card_type() != CARD_TYPE_FELICA) {
         return S_FALSE;
     }
 
     memcpy(IDm, aime_get_card_id(), min(aime_get_card_type(), 8));
 
-    api_send(PACKET_25_CARD_FELICA, aime_get_card_type(), aime_get_card_id());
+    api_send(PACKET_25_CARD_FELICA, aime_get_card_type(), (uint8_t*)aime_get_card_id());
 
     return S_OK;
 }
@@ -205,7 +205,7 @@ HRESULT aime_io_nfc_get_felica_id(uint8_t unit_no, uint64_t *IDm) {
     Minimum API version: 0x0100
 */
 
-void aime_io_led_set_color(uint8_t unit_no, uint8_t r, uint8_t g, uint8_t b) {
+void aime_io_led_set_color(__attribute__((unused)) uint8_t unit_no, uint8_t r, uint8_t g, uint8_t b) {
     HRESULT hr = aime_led_set(r, g, b);
     if (!SUCCEEDED(hr)) {
         dprintf("aime2aime: LED set failed: %lx", hr);
@@ -243,7 +243,7 @@ void aime_io_nfc_radio_off() {
     }
 }
 
-BOOL WINAPI DllMain(HMODULE mod, DWORD cause, void *ctx)
+BOOL __attribute__((unused)) WINAPI DllMain(__attribute__((unused)) HMODULE mod, DWORD cause, __attribute__((unused)) void *ctx)
 {
 
     if (cause != DLL_PROCESS_DETACH) {

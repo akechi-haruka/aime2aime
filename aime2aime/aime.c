@@ -137,7 +137,7 @@ HRESULT aime_encode(const uint8_t *in, uint32_t inlen, uint8_t *out, uint32_t *o
     uint32_t offset = 0;
 
     out[offset++] = 0xE0;
-    for (int i = 0; i < inlen; i++){
+    for (uint32_t i = 0; i < inlen; i++){
 
         uint8_t byte = in[i];
 
@@ -410,7 +410,7 @@ HRESULT aime_get_led_info(char* out, uint32_t* len){
     return aime_get_string_packet(AIME_CMD_LED_GET_INFO, out, len);
 }
 
-DWORD WINAPI polling_thread(void* data) {
+DWORD WINAPI polling_thread(__attribute__((unused)) void* data) {
     dprintf(NAME ": Card Polling Thread started\n");
     while (is_polling){
 
@@ -422,9 +422,9 @@ DWORD WINAPI polling_thread(void* data) {
         if (last_card_type != CARD_TYPE_NONE){
 
             if (last_card_type == CARD_TYPE_MIFARE){
-                api_send(PACKET_26_CARD_AIME, aime_get_card_len(), aime_get_card_id());
+                api_send(PACKET_26_CARD_AIME, aime_get_card_len(), (uint8_t*)aime_get_card_id());
             } else if (last_card_type == CARD_TYPE_FELICA){
-                api_send(PACKET_25_CARD_FELICA, aime_get_card_len(), aime_get_card_id());
+                api_send(PACKET_25_CARD_FELICA, aime_get_card_len(), (uint8_t*)aime_get_card_id());
             }
 
             if (aime_use_led_flash){
