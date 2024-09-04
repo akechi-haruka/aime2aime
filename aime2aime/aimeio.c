@@ -252,7 +252,7 @@ BOOL __attribute__((unused)) WINAPI DllMain(__attribute__((unused)) HMODULE mod,
         return TRUE;
     }
 
-    if (api_get_version() <= MIN_API_VER){
+    if (api_get_version() < MIN_API_VER){
         dprintf("aime2aime: API dll is outdated! At least v.%x is required, DLL is v.%x", MIN_API_VER, api_get_version());
         return FALSE;
     }
